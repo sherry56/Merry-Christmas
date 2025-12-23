@@ -221,7 +221,7 @@
                 
                 <div class="symbol">+</div>
 
-                <img src="tree.jpg" alt="圣诞树" class="item-img">
+                <img src="tree.jpg" alt="图片" class="item-img">
                 
                 <div class="symbol">=</div>
             </div>
@@ -234,33 +234,52 @@
                 <div class="main-title">巳巳如意的老姐妹们</div>
                 <div class="sub-title">🎄 圣诞节快乐! 🎄</div>
             </div>
-            <video id="suprise-video" src="audio.mp4" controls playsinline></video>
+            <video id="suprise-video" src="audio.mp4" controls playsinline preload="auto"></video>
         </div>
 
     </div>
 
     <script>
-        // --- 核心互动逻辑 ---
+        // --- 核心互动逻辑 (含加载提示) ---
         
         function revealSurprise() {
             
             const initialContent = document.getElementById('initial-content');
             const resultContent = document.getElementById('result-content');
             const video = document.getElementById('suprise-video');
+            const btn = document.getElementById('mystery-btn');
 
-            // 1. 隐藏初始内容
-            initialContent.style.display = 'none';
+            // 1. 立即改变按钮文字，给用户反馈 (加载提示)
+            btn.innerText = "⏳ 正在准备惊喜...";
+            btn.style.opacity = "0.7"; // 按钮变暗一点
 
-            // 2. 显示结果内容 (使用 flex 布局)
-            resultContent.style.display = 'flex';
+            // 定义切换界面的函数
+            function showVideoInterface() {
+                // 如果已经切换过了，就不要重复切换
+                if (initialContent.style.display === 'none') return;
 
-            // 3. 播放视频
-            video.play().catch(error => {
-                console.log("自动播放被拦截，等待用户手动点击播放:", error);
-            });
+                initialContent.style.display = 'none';
+                resultContent.style.display = 'flex';
+                document.body.style.background = "linear-gradient(to bottom, #00897b, #004d40)";
+                
+                // 尝试播放
+                video.play().catch(error => {
+                    console.log("自动播放拦截，需手动点击:", error);
+                });
+            }
 
-            // 4. 背景加深
-            document.body.style.background = "linear-gradient(to bottom, #00897b, #004d40)";
+            // 2. 尝试加载视频
+            video.load(); 
+
+            // 3. 情况A: 视频准备好了 -> 立即播放
+            video.oncanplay = function() {
+                showVideoInterface();
+            };
+
+            // 4. 情况B: 网络太慢，超过3秒还没好 -> 强制切换，不让用户干等
+            setTimeout(() => {
+                showVideoInterface();
+            }, 3000);
         }
 
         // --- 特效逻辑 ---
