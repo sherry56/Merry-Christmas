@@ -2,173 +2,221 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>罗玥生日快乐</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SugerMoon Christmas</title>
     <style>
+        /* --- 整体配色与背景 --- */
         body {
-            background-color: #fdf6f6; /* 柔和的背景色 */
+            /* 浅绿色渐变背景 */
+            background: linear-gradient(to bottom, #e0f7fa, #c8e6c9);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            font-family: 'Microsoft YaHei', sans-serif;
-            overflow: hidden;
+            font-family: 'Microsoft YaHei', 'Comic Sans MS', sans-serif;
+            overflow: hidden; /* 防止雪花导致滚动条出现 */
+            color: #2e7d32; /* 深绿色文字 */
         }
 
+        /* --- 主卡片容器 --- */
         .container {
+            position: relative;
+            z-index: 10; /* 保证在雪花上面 */
             text-align: center;
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            /* 半透明白色背景，带一点绿色边框 */
+            background: rgba(255, 255, 255, 0.9);
+            border: 3px solid #a5d6a7;
+            padding: 30px 25px;
+            width: 80%;
+            max-width: 380px;
+            border-radius: 30px;
+            /* 柔和的绿色阴影 */
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.2);
             display: flex;
+            flex-direction: column;
             align-items: center;
             gap: 20px;
-            flex-wrap: wrap;
+            transition: all 0.3s ease;
+        }
+
+        /* --- 等式区域 --- */
+        .equation-group {
+            display: flex;
+            align-items: center;
             justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 10px;
         }
 
         /* 图片样式 */
         .item-img {
-            width: 150px;
-            height: auto;
-            border-radius: 10px;
-            transition: transform 0.3s;
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            /* 给图片加一点可爱的浮动效果 */
+            animation: floatY 3s ease-in-out infinite;
+        }
+        /* 让第二个图片浮动稍微错开一点时间 */
+        .item-img:nth-child(3) {
+            animation-delay: 1.5s;
         }
 
-        .item-img:hover {
-            transform: scale(1.05);
-        }
-
-        /* 符号样式 (+ 和 =) */
+        /* 符号样式 */
         .symbol {
-            font-size: 40px;
-            color: #ff8e8e;
+            font-size: 28px;
+            color: #ef5350; /* 用一点红色点缀符号，增加节日感 */
             font-weight: bold;
         }
 
-        /* 互动区域容器 */
-        .result-area {
-            position: relative;
-            width: 200px;
-            height: 100px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* 点击前的按钮/礼盒 */
-        #mystery-box {
-            font-size: 50px;
+        /* --- 按钮与结果 --- */
+        /* 按钮/礼盒 */
+        #mystery-btn {
+            font-size: 18px;
             cursor: pointer;
-            animation: bounce 2s infinite;
-            background: #ffecd2;
-            padding: 10px 20px;
-            border-radius: 15px;
-            border: 2px dashed #ffb7b2;
+            /* 绿色渐变按钮 */
+            background: linear-gradient(45deg, #66bb6a, #43a047);
+            padding: 12px 30px;
+            border-radius: 50px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            color: white;
+            font-weight: bold;
+            letter-spacing: 1px;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.2s;
         }
 
-        #mystery-box:hover {
-            background: #ffdfba;
+        #mystery-btn:active {
+            transform: scale(0.95);
         }
 
         /* 隐藏的文字结果 */
         #final-text {
             display: none; /* 初始隐藏 */
-            font-size: 28px;
-            font-weight: bold;
-            color: #ff5e5e;
-            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            animation: expand 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
 
-        /* 动画定义 */
-        @keyframes bounce {
+        .main-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+        
+        .sub-title {
+            font-size: 22px;
+            color: #d81b60; /* 玫红色副标题，甜美感 */
+        }
+
+        /* --- 动画定义 --- */
+        @keyframes floatY {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
 
-        @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.5); }
-            100% { opacity: 1; transform: scale(1); }
+        @keyframes expand {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        /* 简单的彩带粒子 */
-        .confetti {
+        /* --- 雪花特效样式 --- */
+        .snowflake {
             position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: #f00;
-            animation: fall linear forwards;
+            top: -10px;
+            background-color: white; /* 白色的雪 */
+            border-radius: 50%; /* 圆形 */
+            opacity: 0.8;
+            pointer-events: none; /* 不挡鼠标点击 */
+            animation: fall linear infinite;
         }
 
         @keyframes fall {
-            to { transform: translateY(100vh) rotate(720deg); }
+            to {
+                transform: translateY(105vh); /* 下落到屏幕底部下方 */
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <img src="tree.jpg" alt="圣诞树" class="item-img">
+        <div class="equation-group" id="equation-part">
+            <img src="moon.png" alt="月亮" class="item-img">
+            <div class="symbol">+</div>
+            <img src="candy.png" alt="糖果" class="item-img">
+            <div class="symbol">=</div>
+        </div>
         
-        <div class="symbol">+</div>
-        
-        <img src="jiyi.jpg" alt="吉伊" class="item-img">
-        
-        <div class="symbol">=</div>
-        
-        <div class="result-area">
-            <div id="mystery-box" onclick="revealSurprise()">🎁 点击揭晓</div>
-            <div id="final-text">✨ 罗玥生日快乐! ✨</div>
+        <button id="mystery-btn" onclick="revealSurprise()">🌙 点击接收甜蜜祝福 🍬</button>
+
+        <div id="final-text">
+            <div class="main-title">SugerMoon</div>
+            <div class="sub-title">🎄 圣诞节快乐! 🎄</div>
         </div>
     </div>
 
     <script>
+        // --- 核心互动逻辑 ---
         function revealSurprise() {
-            const box = document.getElementById('mystery-box');
-            const text = document.getElementById('final-text');
+            const equationPart = document.getElementById('equation-part');
+            const btn = document.getElementById('mystery-btn');
+            const finalText = document.getElementById('final-text');
 
-            // 1. 隐藏盒子
-            box.style.display = 'none';
-            
-            // 2. 显示文字
-            text.style.display = 'block';
+            // 1. 隐藏等式和按钮
+            equationPart.style.display = 'none';
+            btn.style.display = 'none';
 
-            // 3. 触发撒花特效
-            createConfetti();
+            // 2. 显示祝福文字
+            finalText.style.display = 'flex';
+
+            // 3. 加大雪量 (可选：点击后雪下得更大)
+            // startSnowing(200); // 如果希望点击后雪变大，取消这行注释
         }
 
-        function createConfetti() {
-            const colors = ['#ff5e5e', '#ffc107', '#4caf50', '#2196f3', '#9c27b0'];
-            
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.classList.add('confetti');
-                
-                // 随机颜色
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                
-                // 随机位置
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.top = -10 + 'px';
-                
-                // 随机大小和速度
-                const size = Math.random() * 10 + 5 + 'px';
-                confetti.style.width = size;
-                confetti.style.height = size;
-                confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
-                
-                document.body.appendChild(confetti);
+        // --- 雪花特效逻辑 ---
+        function createSnowflake() {
+            const snow = document.createElement('div');
+            snow.classList.add('snowflake');
 
-                // 动画结束后移除元素
-                setTimeout(() => {
-                    confetti.remove();
-                }, 5000);
-            }
+            // 随机大小
+            const size = Math.random() * 10 + 5 + 'px';
+            snow.style.width = size;
+            snow.style.height = size;
+
+            // 随机水平位置
+            snow.style.left = Math.random() * 100 + 'vw';
+
+            // 随机下落速度 (2s 到 7s 之间)
+            const duration = Math.random() * 5 + 2 + 's';
+            snow.style.animationDuration = duration;
+            
+            // 随机透明度，增加层次感
+            snow.style.opacity = Math.random() * 0.6 + 0.4;
+
+            document.body.appendChild(snow);
+
+            // 动画结束后移除元素，防止页面卡顿
+            setTimeout(() => {
+                snow.remove();
+            }, parseFloat(duration) * 1000);
         }
+
+        let snowInterval;
+
+        function startSnowing(frequency) {
+            // 清除之前的定时器（如果有）
+            if (snowInterval) clearInterval(snowInterval);
+            // 设置新的定时器生成雪花
+            snowInterval = setInterval(createSnowflake, frequency);
+        }
+
+        // 页面加载后立即开始下小雪 (数字越大雪越小，越小雪越大)
+        startSnowing(300); 
     </script>
 </body>
 </html>
