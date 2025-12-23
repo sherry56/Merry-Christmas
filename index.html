@@ -25,9 +25,10 @@
             position: relative;
             z-index: 20;
             text-align: center;
-            background: rgba(255, 192, 203, 0.95) ;
+            /* 浅粉色背景 */
+            background: rgba(255, 192, 203, 0.95);
             border: 3px solid #80cbc4;
-            padding: 30px 20px; /*稍微减小内边距以容纳视频 */
+            padding: 30px 20px;
             width: 85%;
             max-width: 400px;
             border-radius: 30px;
@@ -58,7 +59,7 @@
 
         /* 图片和SVG通用样式 */
         .item-img {
-            width: 70px; /*稍微调小一点 */
+            width: 70px;
             height: 70px;
             object-fit: contain;
             animation: floatY 3s ease-in-out infinite;
@@ -142,7 +143,7 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* --- 特效样式 (保持不变) --- */
+        /* --- 特效样式 --- */
         .snowflake {
             position: absolute;
             top: -20px;
@@ -240,7 +241,9 @@
 
     <script>
         // --- 核心互动逻辑 ---
+        
         function revealSurprise() {
+            
             const initialContent = document.getElementById('initial-content');
             const resultContent = document.getElementById('result-content');
             const video = document.getElementById('suprise-video');
@@ -252,8 +255,6 @@
             resultContent.style.display = 'flex';
 
             // 3. 播放视频
-            // 注意：部分手机浏览器可能会阻止自动播放有声音的视频，
-            // 如果自动播放失败，用户仍可以点击视频上的播放按钮。
             video.play().catch(error => {
                 console.log("自动播放被拦截，等待用户手动点击播放:", error);
             });
@@ -262,7 +263,7 @@
             document.body.style.background = "linear-gradient(to bottom, #00897b, #004d40)";
         }
 
-        // --- 特效逻辑 (保持不变) ---
+        // --- 特效逻辑 ---
         function createSnowflake() {
             const snow = document.createElement('div');
             snow.classList.add('snowflake');
@@ -295,10 +296,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
