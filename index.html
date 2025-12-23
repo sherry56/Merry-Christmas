@@ -27,32 +27,39 @@
             text-align: center;
             background: rgba(255, 255, 255, 0.95);
             border: 3px solid #80cbc4;
-            padding: 30px 25px;
-            width: 80%;
-            max-width: 380px;
+            padding: 30px 20px; /*稍微减小内边距以容纳视频 */
+            width: 85%;
+            max-width: 400px;
             border-radius: 30px;
             box-shadow: 0 10px 25px rgba(0, 77, 64, 0.3);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
             transition: all 0.5s ease;
         }
 
-        /* --- 等式区域 --- */
+        /* --- 初始内容区域 (等式+按钮) --- */
+        #initial-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            transition: opacity 0.5s;
+        }
+
         .equation-group {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
             width: 100%;
-            margin-bottom: 10px;
         }
 
         /* 图片和SVG通用样式 */
         .item-img {
-            width: 80px;
-            height: 80px;
+            width: 70px; /*稍微调小一点 */
+            height: 70px;
             object-fit: contain;
             animation: floatY 3s ease-in-out infinite;
             filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
@@ -62,14 +69,12 @@
             animation-delay: 1.5s;
         }
 
-        /* 符号样式 */
         .symbol {
-            font-size: 28px;
+            font-size: 24px;
             color: #ff6f00;
             font-weight: bold;
         }
 
-        /* --- 按钮与结果 --- */
         #mystery-btn {
             font-size: 18px;
             cursor: pointer;
@@ -90,24 +95,40 @@
             transform: scale(0.95);
         }
 
-        /* 隐藏的文字结果 */
-        #final-text {
-            display: none;
+        /* --- 结果内容区域 (文字+视频) --- */
+        #result-content {
+            display: none; /* 初始隐藏 */
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+            width: 100%;
             animation: expand 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
 
+        .final-text-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
         .main-title {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: bold;
             color: #00695c;
         }
         
         .sub-title {
-            font-size: 22px;
+            font-size: 20px;
             color: #d81b60;
+        }
+
+        /* 视频样式 */
+        video {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            outline: none;
         }
 
         /* --- 动画定义 --- */
@@ -121,123 +142,127 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* --- 特效样式 --- */
+        /* --- 特效样式 (保持不变) --- */
         .snowflake {
             position: absolute;
-            top: -20px; /* 初始位置稍微提高 */
+            top: -20px;
             background-color: #ffffff; 
             border-radius: 50%;
             box-shadow: 0 0 5px #ffffff;
             pointer-events: none;
             z-index: 1;
-            /* 雪花只需要下落 */
             animation-name: fallOnly;
             animation-timing-function: linear;
             animation-iteration-count: infinite;
         }
 
-        /* 【修改点】糖果样式 */
         .falling-candy {
             position: absolute;
-            top: -30px; /* 初始位置在屏幕外上方 */
+            top: -30px;
             font-size: 24px;
             pointer-events: none;
             z-index: 5;
-            /* 【修改点】应用合并后的下落+旋转动画 */
             animation-name: fallAndSpin;
             animation-timing-function: linear;
             animation-iteration-count: infinite;
         }
 
-        /* 【修改点】雪花单独的下落动画 */
         @keyframes fallOnly {
             to { transform: translateY(110vh); }
         }
         
-        /* 【修改点】合并后的糖果动画：一边下落一边旋转 */
         @keyframes fallAndSpin {
-            from {
-                transform: translateY(0) rotate(0deg);
-            }
-            to {
-                /* 下落到屏幕下方，同时旋转一圈 */
-                transform: translateY(110vh) rotate(360deg);
-            }
+            from { transform: translateY(0) rotate(0deg); }
+            to { transform: translateY(110vh) rotate(360deg); }
         }
     </style>
 </head>
 <body>
 
-    <audio id="audio-msg" src="audio.mp4" preload="auto"></audio>
-
     <div class="container">
-        <div class="equation-group" id="equation-part">
-            
-            <svg class="item-img" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="candyRed" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style="stop-color:#FF4162;stop-opacity:1" />
-                  <stop offset="100%" style="stop-color:#D32F2F;stop-opacity:1" />
-                </linearGradient>
-                <linearGradient id="bowGreen" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" style="stop-color:#66BB6A;stop-opacity:1" />
-                  <stop offset="100%" style="stop-color:#388E3C;stop-opacity:1" />
-                </linearGradient>
-                <path id="canePath" d="M 60,95 V 35 A 20,20 0 0,0 20,35 V 50" fill="none" stroke-width="14" stroke-linecap="round"/>
-                <clipPath id="caneClip"><use href="#canePath" stroke="white" /></clipPath>
-              </defs>
-              <use href="#canePath" stroke="#FFFFFF" stroke-width="14" filter="drop-shadow(1px 2px 2px rgba(0,0,0,0.1))"/>
-              <g clip-path="url(#caneClip)" stroke="url(#candyRed)" stroke-width="14">
-                <line x1="-10" y1="20" x2="50" y2="80" stroke-width="6" />
-                <line x1="0" y1="0" x2="70" y2="70" stroke-width="6" />
-                <line x1="20" y1="-10" x2="90" y2="60" stroke-width="6" />
-                <line x1="40" y1="-10" x2="100" y2="50" stroke-width="6" />
-                <line x1="60" y1="0" x2="110" y2="50" stroke-width="6" />
-                <line x1="65" y1="60" x2="90" y2="85" stroke-width="6" />
-                <line x1="55" y1="80" x2="80" y2="105" stroke-width="6" />
-                <line x1="10" y1="15" x2="40" y2="45" stroke-width="6" />
-                 <line x1="-5" y1="30" x2="30" y2="65" stroke-width="6" />
-              </g>
-              <g transform="translate(40, 55)" fill="url(#bowGreen)">
-                <ellipse cx="-8" cy="0" rx="10" ry="6" transform="rotate(-20)"/>
-                <ellipse cx="8" cy="0" rx="10" ry="6" transform="rotate(20)"/>
-                <circle cx="0" cy="0" r="4" fill="#2E7D32"/>
-                <path d="M -2,2 Q -8,15 -12,18 L -8,20 Q -4,15 2,2 Z" />
-                <path d="M 2,2 Q 8,15 12,18 L 8,20 Q 4,15 -2,2 Z" />
-              </g>
-              <path d="M 56,90 V 35 A 16,16 0 0,0 24,35 V 45" fill="none" stroke="white" stroke-width="2" opacity="0.4" stroke-linecap="round"/>
-            </svg>
-            
-            <div class="symbol">+</div>
-
-            <img src="moon.png" alt="月亮" class="item-img">
-            
-            <div class="symbol">=</div>
-        </div>
         
-        <button id="mystery-btn" onclick="revealSurprise()">🌙 点击接收甜蜜祝福 🍬</button>
+        <div id="initial-content">
+            <div class="equation-group">
+                <svg class="item-img" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="candyRed" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#FF4162;stop-opacity:1" />
+                      <stop offset="100%" style="stop-color:#D32F2F;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="bowGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" style="stop-color:#66BB6A;stop-opacity:1" />
+                      <stop offset="100%" style="stop-color:#388E3C;stop-opacity:1" />
+                    </linearGradient>
+                    <path id="canePath" d="M 60,95 V 35 A 20,20 0 0,0 20,35 V 50" fill="none" stroke-width="14" stroke-linecap="round"/>
+                    <clipPath id="caneClip"><use href="#canePath" stroke="white" /></clipPath>
+                  </defs>
+                  <use href="#canePath" stroke="#FFFFFF" stroke-width="14" filter="drop-shadow(1px 2px 2px rgba(0,0,0,0.1))"/>
+                  <g clip-path="url(#caneClip)" stroke="url(#candyRed)" stroke-width="14">
+                    <line x1="-10" y1="20" x2="50" y2="80" stroke-width="6" />
+                    <line x1="0" y1="0" x2="70" y2="70" stroke-width="6" />
+                    <line x1="20" y1="-10" x2="90" y2="60" stroke-width="6" />
+                    <line x1="40" y1="-10" x2="100" y2="50" stroke-width="6" />
+                    <line x1="60" y1="0" x2="110" y2="50" stroke-width="6" />
+                    <line x1="65" y1="60" x2="90" y2="85" stroke-width="6" />
+                    <line x1="55" y1="80" x2="80" y2="105" stroke-width="6" />
+                    <line x1="10" y1="15" x2="40" y2="45" stroke-width="6" />
+                     <line x1="-5" y1="30" x2="30" y2="65" stroke-width="6" />
+                  </g>
+                  <g transform="translate(40, 55)" fill="url(#bowGreen)">
+                    <ellipse cx="-8" cy="0" rx="10" ry="6" transform="rotate(-20)"/>
+                    <ellipse cx="8" cy="0" rx="10" ry="6" transform="rotate(20)"/>
+                    <circle cx="0" cy="0" r="4" fill="#2E7D32"/>
+                    <path d="M -2,2 Q -8,15 -12,18 L -8,20 Q -4,15 2,2 Z" />
+                    <path d="M 2,2 Q 8,15 12,18 L 8,20 Q 4,15 -2,2 Z" />
+                  </g>
+                  <path d="M 56,90 V 35 A 16,16 0 0,0 24,35 V 45" fill="none" stroke="white" stroke-width="2" opacity="0.4" stroke-linecap="round"/>
+                </svg>
+                
+                <div class="symbol">+</div>
 
-        <div id="final-text">
-            <div class="main-title">SugerMoon</div>
-            <div class="sub-title">🎄 圣诞节快乐! 🎄</div>
+                <img src="moon.png" alt="月亮" class="item-img">
+                
+                <div class="symbol">=</div>
+            </div>
+            
+            <button id="mystery-btn" onclick="revealSurprise()">🌙 点击接收甜蜜祝福 🍬</button>
         </div>
+
+        <div id="result-content">
+            <div class="final-text-container">
+                <div class="main-title">SugerMoon</div>
+                <div class="sub-title">🎄 圣诞节快乐! 🎄</div>
+            </div>
+            <video id="suprise-video" src="audio.mp4" controls playsinline></video>
+        </div>
+
     </div>
 
     <script>
+        // --- 核心互动逻辑 ---
         function revealSurprise() {
-            const equationPart = document.getElementById('equation-part');
-            const btn = document.getElementById('mystery-btn');
-            const finalText = document.getElementById('final-text');
-            const audio = document.getElementById('audio-msg');
+            const initialContent = document.getElementById('initial-content');
+            const resultContent = document.getElementById('result-content');
+            const video = document.getElementById('suprise-video');
 
-            equationPart.style.display = 'none';
-            btn.style.display = 'none';
-            finalText.style.display = 'flex';
-            audio.play().catch(error => console.log("Play error:", error));
+            // 1. 隐藏初始内容
+            initialContent.style.display = 'none';
+
+            // 2. 显示结果内容 (使用 flex 布局)
+            resultContent.style.display = 'flex';
+
+            // 3. 播放视频
+            // 注意：部分手机浏览器可能会阻止自动播放有声音的视频，
+            // 如果自动播放失败，用户仍可以点击视频上的播放按钮。
+            video.play().catch(error => {
+                console.log("自动播放被拦截，等待用户手动点击播放:", error);
+            });
+
+            // 4. 背景加深
             document.body.style.background = "linear-gradient(to bottom, #00897b, #004d40)";
         }
 
-        // --- 特效逻辑 ---
+        // --- 特效逻辑 (保持不变) ---
         function createSnowflake() {
             const snow = document.createElement('div');
             snow.classList.add('snowflake');
@@ -246,10 +271,8 @@
             snow.style.height = size;
             snow.style.left = Math.random() * 100 + 'vw';
             const duration = Math.random() * 5 + 3 + 's';
-            // 【修改点】 JS 只需设置一个时间
             snow.style.animationDuration = duration;
             snow.style.opacity = Math.random() * 0.5 + 0.5;
-
             document.body.appendChild(snow);
             setTimeout(() => { snow.remove(); }, parseFloat(duration) * 1000);
         }
@@ -262,9 +285,7 @@
             candy.style.left = Math.random() * 100 + 'vw';
             candy.style.fontSize = Math.random() * 15 + 15 + 'px';
             const duration = Math.random() * 3 + 2 + 's';
-            // 【修改点】 JS 只需设置一个时间，同时控制下落和旋转快慢
             candy.style.animationDuration = duration;
-
             document.body.appendChild(candy);
             setTimeout(() => { candy.remove(); }, parseFloat(duration) * 1000);
         }
@@ -274,4 +295,3 @@
     </script>
 </body>
 </html>
-
